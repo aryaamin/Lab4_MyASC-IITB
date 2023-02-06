@@ -30,4 +30,18 @@ User.comparePassword = (candidatePassword, hash, cb) => {
   });
 };
 
+User.userInfo = (userid, cb) => {
+  const query = {
+    text: "SELECT * FROM student WHERE id = $1",
+    values: [userid],
+  };
+  client.query(query, (err, result) => {
+    if (err) return cb(err, null);
+    return cb(null, result.rows[0]);
+  });
+};
+
+
+
+
 module.exports = User;

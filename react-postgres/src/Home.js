@@ -1,62 +1,49 @@
-import React, { useEffect }  from "react";
-import { useNavigate } from "react-router-dom"
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 // import Login from './Login'
 
 const Home = () => {
-
-    const checkSession = async (event) => {
-        // event.preventDefault();
-        console.log('klklklk')
-        const response = await fetch("http://localhost:3001/check-session", {
-            method: "GET",
-            mode:"cors",
-            credentials: "include",
-        })
-        .then((res) => res.json())
-            .then((data) => {
-              console.log('svdnsnvd', data)
-              if (data.msg) {
-                navigate('/login')
-              } else {
-                console.log('Already logged in')
-                // navigate('/home')
-                // Redirect to a secure page
-              }
-            });
-    
-        };
-        
-
-        useEffect(() => {
-            // console.log('vbgsd')
-            checkSession();
-          },);
-
-    const navigate = useNavigate()
-    const handleClick = () => {
-      const response = fetch("http://localhost:3001/logout", {
+  const checkSession = async (event) => {
+    const response = await fetch("http://localhost:3001/check-session", {
       method: "GET",
-      mode:"cors",
+      mode: "cors",
       credentials: "include",
-  }).then((res) => res.json())
-  .then((data) => {
-    // console.log('svdnsnvd', data)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.msg) {
+          navigate("/login");
+        } else {
+          console.log("Already logged in");
+        }
+      });
+  };
 
-      console.log('Logged out')
-      navigate('/login')
-      // Redirect to a secure page
-    
+  useEffect(() => {
+    checkSession();
   });
-      };
-    
-      return (
-        <div>
-          <button type="button" onClick={handleClick}>
-            LogOut
-          </button>
-        </div>
-      );
-    
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+    const response = fetch("http://localhost:3001/logout", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Logged out");
+        navigate("/login");
+      });
+  };
+
+  return (
+    <div>
+      <button type="button" onClick={handleClick}>
+        LogOut
+      </button>
+    </div>
+  );
 };
 
 export default Home;
