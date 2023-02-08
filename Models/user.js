@@ -1,47 +1,35 @@
-const bcrypt = require("bcryptjs");
-const { Client } = require("pg");
+const client = require("./dtabase");
+const bcrypt = require("bcrypt");
 
-const client = new Client({
-  user: "postgres",
-  host: "localhost",
-  database: "lab4",
-  password: "9909911391",
-  port: 5432,
-});
-client.connect();
+class UserPass {
+    constructor (id) {
+        this.id = id;
+    }
 
-const User = {};
+    getId() {
+        return id;
+    }
 
-User.findByUsername = (username, cb) => {
-  const query = {
-    text: "SELECT * FROM user_password WHERE id = $1",
-    values: [username],
-  };
-  client.query(query, (err, result) => {
-    if (err) return cb(err, null);
-    return cb(null, result.rows[0]);
-  });
-};
+    async getPassHash() {
+        const result = await client.query(`SELECT hashed_password 
+                                         FROM user_password 
+                                         WHERE id = $1`, [this.id]);
 
-User.comparePassword = (candidatePassword, hash, cb) => {
-  bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
-    if (err) return cb(err);
-    return cb(null, isMatch);
-  });
-};
+        return result;
+    }
 
-User.userInfo = (userid, cb) => {
-  const query = {
-    text: "SELECT * FROM student WHERE id = $1",
-    values: [userid],
-  };
-  client.query(query, (err, result) => {
-    if (err) return cb(err, null);
-    return cb(null, result.rows[0]);
-  });
-};
+    async verifyPassword(password) {
+        const hash = await this.getPassHash();
 
+        if (!hash.rows.length) {
+            return false;
+        } 
 
+        const res = await bcrypt.compare(password, hash.rows[0]["hashed_password"]);
 
+        return res;
+    }
 
-module.exports = User;
+}
+
+module.exports = UserPass;

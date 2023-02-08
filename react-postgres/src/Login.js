@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -31,10 +31,10 @@ const Login = () => {
     checkSession();
   });
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = () => {
+    // event.preventDefault();
 
-    const response = await fetch("http://localhost:3001/login", {
+    const response = fetch("http://localhost:3001/login", {
       method: "POST",
       mode: "cors",
       credentials: "include",
