@@ -61,11 +61,24 @@ app.post("/dropcourse", async (req, res) => {
   user.dropCourse(req.body.id, req.body.course_id, req.body.semester, req.body.year);
 });
 
+app.post("/register_course", async (req, res) => {
+  console.log('registering', req.session.userid);
+  const user = new Student(req.session.userid);
+  const result = await user.registerCourse(req.body.cid, req.body.sid);
+  if (result.status == 1) {
+    return res.json({error: "pre req not taken"});
+  }
+  else if (result.status ==2) {
+    return res.json({error: "slot clashed"});
+  }
+  return res.json({msg: "registered"});
+});
+
 app.post("/getinfo", async (req, res) => {
   if (req.session.userid) {
-    console.log(req.session.id)
+    // console.log(req.session.id)
     const userid = req.session.userid;
-    console.log('fdfd', userid);
+    // console.log('fdfd', userid);
     const user = new Student(userid)
     let info = await user.getInfo();
     let currSem = await user.getCurrentSem();
@@ -84,7 +97,7 @@ app.post("/courses", async (req, res) => {
   if (req.session.userid) {
     // console.log(req.session.id)
     const cid = req.body.cid;
-    console.log('dfvsdvfdfd', cid);
+    // console.log('dfvsdvfdfd', cid);
     const user = new Courseinfo(cid)
     let coinfo = await user.getCurrCourses();
     // coinfo = coinfo.filter((item, 
@@ -92,7 +105,7 @@ app.post("/courses", async (req, res) => {
     // $.each(coinfo, function(i, el){
     //     if($.inArray(el, uniqueinfo) === -1) uniqueinfo.push(el);
     // });
-    console.log('mydata', coinfo)
+    // console.log('mydata', coinfo)
     res.json({"info" : coinfo})
   } else {
     return res.json({ msg: "non-active" });
@@ -103,7 +116,7 @@ app.post("/depts", async (req, res) => {
   if (req.session.userid) {
     const user = new Deptinfo()
     let coinfo = await user.getRunningDepts();
-    console.log('mydata', coinfo)
+    // console.log('mydata', coinfo)
     res.json({"info" : coinfo})
   } else {
     return res.json({ msg: "non-active" });
@@ -114,7 +127,7 @@ app.post("/running", async (req, res) => {
   if (req.session.userid) {
     const user = new Deptinfo(req.body.deptname)
     let coinfo = await user.getRunningCourses();
-    console.log('mydata', coinfo)
+    // console.log('mydata', coinfo)
     res.json({"info" : coinfo})
   } else {
     return res.json({ msg: "non-active" });
